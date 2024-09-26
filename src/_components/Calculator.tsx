@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 function hp_calc(x: number, b: number): number | null {
-    if (1 < x && x < 2) {
+    if (1 <= x && x < 2) {
         return b;
     } else if (2 <= x && x <= 5) {
         return (1 + 0.2 * (x - 1)) * b;
@@ -18,7 +18,7 @@ function hp_calc(x: number, b: number): number | null {
 
 
 function shatters_calc(x: number, b: number): number | null {
-    if (1 < x && x < 2) {
+    if (1 <= x && x < 2) {
         return b;
     } else if (2 <= x && x <= 5) {
         return (1 + 0.3 * (x - 1)) * b;
@@ -34,7 +34,7 @@ function shatters_calc(x: number, b: number): number | null {
 }
 
 function o3_calc(x: number, b: number): number | null {
-    if (1 < x && x < 2) {
+    if (1 <= x && x < 2) {
         return b;
     } else if (2 <= x && x <= 5) {
         return (1 + 0.35 * (x - 1)) * b;
@@ -49,9 +49,20 @@ function o3_calc(x: number, b: number): number | null {
     }
 }
 
+function hp_string(n: number): string {
+    if (n >= 1000000) {
+        return (n / 1000000).toFixed(2).replace(/\.0$/, '') + 'M' + ' (' + n.toLocaleString() + ')';
+    } else if (n >= 100000 && n < 1000000) {
+        return (n / 1000).toFixed(0).replace(/\.0$/, '') + 'K' + ' (' + n.toLocaleString() + ')';
+    } else {
+        return n.toLocaleString();
+    }
+}
+
 const PiecewiseFunctionComponent: React.FC = () => {
     const [x, setX] = useState<number>(1);
     const [b, setB] = useState<number>(0);
+    const [numResult, setNumResult] = useState<number>(0);
     const [result, setResult] = useState<string>(' ');
     const [currentCalc, setCurrentCalc] = useState<'hp' | 'shatters' | 'o3'>('hp');
 
@@ -71,9 +82,11 @@ const PiecewiseFunctionComponent: React.FC = () => {
         }
         if (calculatedResult !== null) {
             const roundedResult = Math.round(calculatedResult);
+            setNumResult(roundedResult);
             setResult(roundedResult.toLocaleString());
         } else {
             setResult(' ');
+            setNumResult(0);
         }
     }, [x, b, currentCalc]);
 
@@ -149,11 +162,44 @@ const PiecewiseFunctionComponent: React.FC = () => {
             </div>
 
             <div className="mt-6">
-                <h3 className="text-lg font-semibold">Scaled HP:</h3>
+                <h3 className="text-lg font-semibold">Scaled Max HP:</h3>
                 <p className="text-2xl font-bold">
                     {result}
                 </p>
             </div>
+            {currentCalc === 'o3' &&
+                <div className="mt-6">
+                    <h3 className="text-lg font-semibold">Dominance:</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.85))}
+                    </p>
+                    <h3 className="text-lg font-semibold">Dance:</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.7))}
+                    </p>
+                    <h3 className="text-lg font-semibold">Exalted:</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.55))}
+                    </p>
+                    <h3 className="text-lg font-semibold">Celestial:</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.4))}
+                    </p>
+                    <h3 className="text-lg font-semibold">Heavens:</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.25))}
+                    </p>
+                    <h3 className="text-lg font-semibold">Death (aftr reset):</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.1))}
+                    </p>
+                    <h3 className="text-lg font-semibold">Death (insant):</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.05))}   
+                    </p>
+                </div>
+            }
+
         </div>
     );
 };
