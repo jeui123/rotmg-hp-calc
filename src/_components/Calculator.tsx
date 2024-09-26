@@ -199,6 +199,18 @@ const PiecewiseFunctionComponent: React.FC = () => {
                     </p>
                 </div>
             }
+            {currentCalc === 'shatters' &&
+                <div className="mt-6">
+                    <h3 className="text-lg font-semibold">Skull (Accursed):</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.5))}
+                    </p>
+                    <h3 className="text-lg font-semibold">Patience (possible after):</h3>
+                    <p className="text-2xl font-bold">
+                        {hp_string(Math.round(numResult * 0.4))}
+                    </p> 
+                </div>
+            }
 
         </div>
     );
